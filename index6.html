@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <div class="container">
+
+        </div>
+    </main>
+    <script>
+        window.onload=function(){
+            const gameContainer=document.querySelector(".container")
+            // const levelsToPoles=new Map()
+            // levelsToPoles.set(1,3)
+            const ringPerPoles=4
+            const ringHeight=100
+            const ringWidth=ringHeight*2
+            const poleWidth=50
+            const poleHeight=500
+            function getPole(){
+                const div=document.createElement("div")
+                div.classList.add("pole")
+                div.style.height=`${poleHeight}px`
+                div.style.width = `${poleWidth}px`;
+                div.style.backgroundColor = "brown"; 
+                div.style.position = "absolute"; 
+                // div.style.left = "100px"; 
+                // div.style.top = "50px"; 
+                div.style.borderRadius="2%"
+                return {
+                    div
+                }
+            }
+            // const pole = getPole();
+            // gameContainer.appendChild(pole.div);
+            // const pole1=getPole();
+            // pole1.div.style.left="200px"
+            // gameContainer.appendChild(pole1.div)
+            // const pole2=getPole()
+            // pole2.div.style.left="300px"
+            // gameContainer.appendChild(pole2.div)
+            function makePoles(){
+                for(let i=0; i<=3; i++){
+                    const pole=getPole()
+
+                    pole.div.style.left=`${200+100*i}px`
+                    pole.div.style.top=`${50}px`
+                    gameContainer.appendChild(pole.div)
+            }
+        }
+        makePoles()
+            function getRing(){
+                const div=document.querySelector(".container")
+                div.classList.add("ring")
+                div.style.height=`${ringHeight}px`
+                div.style.width=`${ringWidth}px`
+                div.style.backgroundColor="green"
+                div.style.left="50px"
+                return{
+                    div
+                }
+            }
+            const ring=getRing()
+            gameContainer.appendChild(ring.div)
+            function makeRing(){
+                for(let i=0; i<=4; i++){
+                    const ring=getRing()
+                    gameContainer.appendChild(ring.div)
+                }
+            }
+        }
+    </script>
+</body>
+</html>

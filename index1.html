@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rings and Towers Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            position: relative;
+            margin: 20px auto;
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            height: 500px;
+        }
+        .pole {
+            position: relative;
+            background-color: brown;
+        }
+        .ring {
+            position: absolute;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1 style="text-align: center;">Rings and Towers Game</h1>
+        <div class="container"></div>
+    </main>
+    <script>
+        // -------------------- Ring Class --------------------
+        class Ring {
+            constructor(gameContainer, x, y, width, height, color) {
+                this.div = document.createElement("div");
+                this.div.classList.add("ring");
+                this.div.style.width = `${width}px`;
+                this.div.style.height = `${height}px`;
+                this.div.style.backgroundColor = color;
+                this.div.style.left = `${x}px`;
+                this.div.style.top = `${y}px`;
+                gameContainer.appendChild(this.div);
+            }
+        }
+
+        // -------------------- Pole Class --------------------
+        class Pole {
+            constructor(gameContainer, x, poleWidth, poleHeight) {
+                this.rings = []; // Stack of rings on the pole
+                this.div = document.createElement("div");
+                this.div.classList.add("pole");
+                this.div.style.width = `${poleWidth}px`;
+                this.div.style.height = `${poleHeight}px`;
+                this.div.style.left = `${x - poleWidth / 2}px`;
+                this.div.style.bottom = `0px`;
+                this.div.style.position = "absolute";
+                gameContainer.appendChild(this.div);
+
+                // Center position of the pole for placing rings
+                this.centerX = x;
+                this.baseY = poleHeight;
+            }
+
+            addRing(ring) {
+                const ringCount = this.rings.length;
+                const ringHeight = parseInt(ring.div.style.height);
+                const ringY = this.baseY - (ringCount + 1) * ringHeight;
+                ring.div.style.left = `${this.centerX - parseInt(ring.div.style.width) / 2}px`;
+                ring.div.style.top = `${ringY}px`;
+                this.rings.push(ring);
+            }
+        }
+
+        // -------------------- Game Class --------------------
+        class Game {
+            constructor(containerSelector, numPoles, ringsPerPole) {
+                this.container = document.querySelector(containerSelector);
+                this.numPoles = numPoles;
+                this.ringsPerPole = ringsPerPole;
+
+                this.colors = ["green", "indigo", "red", "tomato", "blue", "purple"]; // Extendable color palette
+                this.ringWidthStep = 20; // Ring width reduction per level
+
+                this.poles = [];
+                this.init();
+            }
+
+            init() {
+                this.createPoles();
+                this.createRings();
+            }
+
+            createPoles() {
+                const containerWidth = this.container.offsetWidth;
+                const gap = containerWidth / (this.numPoles + 1);
+                const poleWidth = 20;
+                const poleHeight = 300;
+
+                for (let i = 1; i <= this.numPoles; i++) {
+                    const x = i * gap;
+                    const pole = new Pole(this.container, x, poleWidth, poleHeight);
+                    this.poles.push(pole);
+                }
+            }
+
+            createRings() {
+                const basePole = this.poles[0]; // Place all rings on the first pole
+                const ringWidth = 150;
+                const ringHeight = 30;
+
+                for (let i = 0; i < this.ringsPerPole; i++) {
+                    const color = this.colors[i % this.colors.length];
+                    const ring = new Ring(
+                        this.container,
+                        0, // Initial x-position, adjusted by the pole
+                        0, // Initial y-position, adjusted by the pole
+                        ringWidth - i * this.ringWidthStep, // Reduce width for smaller rings
+                        ringHeight,
+                        color
+                    );
+                    basePole.addRing(ring);
+                }
+            }
+        }
+
+        // -------------------- Initialize the Game --------------------
+        window.onload = function () {
+            new Game(".container", 3, 4); // 3 poles, 4 rings
+        };
+    </script>
+</body>
+</html>

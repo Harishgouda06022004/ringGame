@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .container {
+            position: relative;
+            height: 500px;
+            width: 100%;
+        }
+        .pole {
+            background-color: brown;
+            position: absolute;
+            width: 100px;
+        }
+        .ring {
+            position: absolute;
+            height: 40px;
+            background-color: red;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rings and Towers game</title>
+</head>
+<body>
+    <main>
+        <h1>Rings and Towers game</h1>
+        <div class="container"></div>
+    </main>
+    <script>
+        window.onload = function () {
+            const gameContainer = document.querySelector(".container");
+
+            const levelsToPoles = new Map();
+            levelsToPoles.set(1, 3);
+            levelsToPoles.set(2, 5);
+            levelsToPoles.set(3, 7);
+            const ringsPerPole = 4;
+            const ringHeight = 40;  // Adjusted for visibility
+            const ringWidth = ringHeight * 2;
+            const poleWidth = 100;
+            const poleHeight = ringHeight * ringsPerPole;
+
+            function getRing({ x, y, color }) {
+                const div = document.createElement("div");
+                div.classList.add("ring");
+                div.style.backgroundColor = color;
+                div.style.width = `${ringWidth}px`;  // Set width of the ring
+                div.style.left = `${x - ringWidth / 2}px`;
+                div.style.top = `${y - ringHeight / 2}px`;
+
+                return {
+                    px: x,
+                    py: y,
+                    color,
+                    moveTo(x, y) {
+                        this.px = x;
+                        this.py = y;
+                        div.style.left = `${x - ringWidth / 2}px`;
+                        div.style.top = `${y - ringHeight / 2}px`;
+                    },
+                    div,  // Return the div element
+                };
+            }
+
+            function getPole(x) {
+                const div = document.createElement("div");
+                div.classList.add("pole");
+                div.style.width = `${poleWidth}px`;
+                div.style.height = `${poleHeight}px`;
+                div.style.left = `${x}px`;
+                div.style.bottom = "0px";  // Set bottom to 0 for positioning
+
+                return {
+                    rings: [],
+                    div,
+                };
+            }
+
+            function makeGame(levels = 3) {
+                return {
+                    currentLevel: 1,
+                    poles: levelsToPoles.get(levels),
+                    makePoles() {
+                        const gap = ringWidth + 10;
+                        let x = 0;
+                        const ps = [];
+
+                        for (let i = 0; i < this.poles; i++) {
+                            x += gap;
+                            const p = getPole(x);
+                            gameContainer.appendChild(p.div);
+                            ps.push(p);
+                        }
+                    },
+                    addRingsToPoles() {
+                        const colors = ["red", "blue", "green", "yellow"];
+
+                        for (let i = 0; i < this.poles; i++) {
+                            const pole = gameContainer.children[i];
+                            for (let j = 0; j < ringsPerPole; j++) {
+                                const ring = getRing({
+                                    x: pole.offsetLeft + poleWidth / 2,
+                                    y: pole.offsetTop + (ringHeight * j),
+                                    color: colors[j],
+                                });
+                                pole.appendChild(ring.div);
+                            }
+                        }
+                    },
+                };
+            }
+
+            const g = makeGame();
+            g.makePoles();
+            g.addRingsToPoles();
+        };
+    </script>
+</body>
+</html>
